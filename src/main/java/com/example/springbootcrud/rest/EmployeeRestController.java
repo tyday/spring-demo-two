@@ -1,12 +1,12 @@
 package com.example.springbootcrud.rest;
 
-import com.example.springbootcrud.dao.EmployeeDAO;
 import com.example.springbootcrud.entity.Employee;
 import com.example.springbootcrud.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -24,11 +24,11 @@ public class EmployeeRestController {
     }
 
     @GetMapping("/employees/{employeeId}")
-    public Employee findById(@PathVariable int employeeId){
-        Employee employee =  employeeService.findById(employeeId);
-        if (employee == null){
-            throw new RuntimeException("Employee id not found - " + employeeId);
-        }
+    public Optional<Employee> findById(@PathVariable int employeeId){
+        Optional<Employee> employee =  employeeService.findById(employeeId);
+//        if (employee == null){
+//            throw new RuntimeException("Employee id not found - " + employeeId);
+//        }
         return employee;
     }
     @PostMapping("/employees")
@@ -46,9 +46,9 @@ public class EmployeeRestController {
 
     @DeleteMapping("/employees/{employeeId}")
     public String deleteEmployee(@PathVariable int employeeId){
-        Employee employee = employeeService.findById(employeeId);
-        if(employee == null){
-            throw new RuntimeException("Employee id not found - " + employeeId);
+        Optional<Employee> employee = employeeService.findById(employeeId);
+        if(employee.isEmpty()){
+            return "No employee found";
         }
         employeeService.deleteById(employeeId);
         return "Deleted employee id - " + employeeId;
